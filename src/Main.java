@@ -1,6 +1,14 @@
-public class Main {
+import java.applet.Applet;
+import java.awt.*;
 
-    public static void main(String[] args) {
-        Inet.run();
+public class Main extends Applet {
+    public void paint(Graphics g) {
+        setBackground(Color.YELLOW);
+        g.setColor(Color.RED);
+        g.setFont(new Font("Helvetica", Font.BOLD, 48));
+        g.drawString("Hello World!", 50, 60);
     }
+
 }
+
+
