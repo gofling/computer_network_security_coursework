@@ -1,0 +1,15 @@
+grant {
+      permission java.security.SecurityPermission "insertProvider";
+      permission java.security.SecurityPermission "putProviderProperty.BC";
+      permission java.net.SocketPermission "www2.macs.hw.ac.uk:80", "connect,resolve";
+      permission java.lang.RuntimePermission "modifyThreadGroup";
+      permission java.lang.RuntimePermission "modifyThread";
+      permission java.util.PropertyPermission "appletviewer.send.event", "read";
+      permission java.io.FilePermission "<<ALL FILES>>", "read, write";
+      permission java.lang.RuntimePermission "usePolicy";
+      permission java.util.PropertyPermission "user.dir", "read, write";
+      permission java.lang.RuntimePermission "exitVM.0";
+      permission java.util.PropertyPermission "org.bouncycastle.pkcs1.strict", "read";
+      permission java.util.PropertyPermission "org.bouncycastle.pkcs1.not_strict", "read";
+
+};

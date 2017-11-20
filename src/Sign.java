@@ -11,10 +11,10 @@ import java.io.InputStream;
 import java.security.Security;
 import java.util.Iterator;
 
-public class Sign {
-    public static void main(String[] args) throws Exception {
+class Sign {
+    static void sign(String filePath, String secretKeyPath, String password, String newFileName) throws Exception {
         Security.addProvider(new BouncyCastleProvider());
-        FileInputStream fin = new FileInputStream("secring_jean.gpg");
+        FileInputStream fin = new FileInputStream(secretKeyPath);
         InputStream in = PGPUtil.getDecoderStream(fin);
         PGPSecretKeyRingCollection skrc;
         skrc = new PGPSecretKeyRingCollection(
@@ -22,10 +22,10 @@ public class Sign {
         Iterator<PGPSecretKeyRing> kri = skrc.getKeyRings();
         PGPSecretKey key = null;
         while (key == null && kri.hasNext()) {
-            PGPSecretKeyRing keyRing = (PGPSecretKeyRing)kri.next();
+            PGPSecretKeyRing keyRing = kri.next();
             Iterator<PGPSecretKey> ki = keyRing.getSecretKeys();
             while (key == null && ki.hasNext()) {
-                PGPSecretKey k = (PGPSecretKey)ki.next();
+                PGPSecretKey k = ki.next();
                 if (k.isSigningKey()) { key = k; }
             }
         }
@@ -33,16 +33,16 @@ public class Sign {
             throw new IllegalArgumentException("Can't find key");
         PGPPrivateKey pgpPrivKey = key.extractPrivateKey(
                 new JcePBESecretKeyDecryptorBuilder().setProvider("BC").build(
-                        "azerty".toCharArray()));
+                        password.toCharArray()));
         PGPSignatureGenerator sGen = new PGPSignatureGenerator(
                 new JcaPGPContentSignerBuilder(key.getPublicKey().getAlgorithm(),
                         PGPUtil.SHA1).setProvider("BC"));
         sGen.init(PGPSignature.BINARY_DOCUMENT, pgpPrivKey);
         PGPCompressedDataGenerator cGen =
                 new PGPCompressedDataGenerator(PGPCompressedData.ZLIB);
-        FileOutputStream out = new FileOutputStream("signedFile.bpg");
+        FileOutputStream out = new FileOutputStream(newFileName + ".bpg");
         BCPGOutputStream bOut = new BCPGOutputStream(cGen.open(out));
-        FileInputStream fIn = new FileInputStream("machin.txt");
+        FileInputStream fIn = new FileInputStream(filePath);
         int ch;
         while ((ch = fIn.read()) >= 0) { sGen.update((byte)ch); }
         sGen.generate().encode(bOut);
